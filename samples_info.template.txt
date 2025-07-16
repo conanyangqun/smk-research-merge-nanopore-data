@@ -1,0 +1,6 @@
+sample_id	barcode	merged	compress	run_path
+S01		N	N	run01/b/h5/ResultFiles
+S01		Y	N	run02/b/h5/ResultFiles
+S01		Y	Y	run03/b/h5/ResultFiles
+S01	BC01		N	run04/b/h5/ResultFiles
+S01	BC03		Y	run05/b/h5/ResultFiles

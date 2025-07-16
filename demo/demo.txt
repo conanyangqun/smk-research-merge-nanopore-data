@@ -1,0 +1,6 @@
+sample_id	barcode	merged	compress	run_path	read_str	fastq_name
+S01		N	N	run01/b/h5/ResultFiles	S01_01	fastq/reads_0001.fastq
+S01		Y	N	run02/b/h5/ResultFiles	S01_02	fastq/result.fastq
+S01		Y	Y	run03/b/h5/ResultFiles	S01_03	fastq/result.fastq.gz
+S01	BC01		N	run04/b/h5/ResultFiles	S01_04	barcode/BC01.fastq
+S01	BC03		Y	run05/b/h5/ResultFiles	S01_05	barcode/BC03.fastq.gz
