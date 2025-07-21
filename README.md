@@ -68,7 +68,7 @@ singularity exec -e \
     --cores all \
     -p \
     -s /biosrc/smk-research-merge-nanopore-data/Snakefile \
-    --config samples_info=samples_info.txt
+    --config info=samples_info.txt
 ```
 
 
@@ -114,10 +114,10 @@ singularity exec -e \
     --cores all \
     -p \
     -s /biosrc/smk-research-merge-nanopore-data/Snakefile \
-    --config samples_info=/xxx/samples_info.txt [out_dir="/xxx"] [out_gz="True"]
+    --config info=/xxx/samples_info.txt [out_dir="/xxx"] [out_gz="True"]
 ```
 
 其中`--config`指定配置参数。具体如下：
-- `samples_info`，设置信息表的路径，必填参数。
+- `info`，设置信息表的路径，必填参数。
 - `out_dir`，指定输出目录，可选参数。未指定时在当前工作目录输出。
 - `out_gz`，设置输出文件是否用`gzip`压缩，可选参数，设置时压缩，不设置时不压缩。
