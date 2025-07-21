@@ -20,8 +20,8 @@ a/b/h5/ResultFiles/
 ```
 
 基本情况如下：
-- 未添加barcode。选择合并时，会在`fastq`目录下生成`result.fastq`文件。选择合并+压缩时，会在`fastq`目录下生成`result.fastq.gz`文件。不合并，则在`fastq`目录下为小型的fastq文件。不合并 + 压缩，错误逻辑。注意，合并成功后会删除所有的小fastq文件。
-- 添加了barcode。不压缩，则在`barcode`目录下生成`<barcode>.fastq`文件。压缩，则生成`<barcode>.fastq.gz`文件。忽略“合并与否”。
+- 未添加barcode。测序软件选择“合并”时，会在`fastq`目录下生成`result.fastq`文件。选择“合并+压缩”时，会在`fastq`目录下生成`result.fastq.gz`文件。“不合并”，则在`fastq`目录下为小型的fastq文件。“不合并 + 压缩”，未测试。本程序会提示“错误逻辑”。注意，合并成功后会删除所有的小fastq文件。
+- 添加了barcode。不压缩，在`barcode`目录下生成`<barcode>.fastq`文件。压缩，则生成`<barcode>.fastq.gz`文件。忽略“合并与否”。
 
 ### 软件安装
 
@@ -80,13 +80,28 @@ singularity exec -e \
 ### 信息表
 
 信息表主要包含以下字段，用于控制合并的数据来源。
-- `sample_id`。具有相同ID的样本最后会合并成单个样本。
-- `barcode`。与`run_path`配合寻找对应的数据文件。
+- `sample_id`。具有相同ID的样本最后会合并成单个样本。最终输出文件命名为：`<sample_id>.tgs.fastq.gz`或者`<sample_id>.tgs.fastq`。
+- `barcode`。与`run_path`配合寻找对应的数据文件。注意区分大小写。例如：`BC01.fastq`。
 - `merged`。填`Y`时，表示下机数据合并，`N`表示不合并。若填写了`barcode`，则不考虑此字段。
 - `compress`。填`Y`时表示数据压缩，`N`表示数据不压缩。
 - `run_path`。填数据路径到`ResultFiles`目录。例如：`/xxx/h5/ResultFiles`.
 
-各个字段的配置寻找的fastq文件规则，可参考[demo.txt](demo/demo.txt)文件的`fastq_name`一列。
+以上参数组合实现的寻找fastq文件的规则如下：
+
+barcode|merged|compress|寻找的fastq文件
+---|---|---|---
+|N|N|fastq目录下所有`*.fastq`文件
+|Y|N|fastq目录下`result.fastq`文件
+|Y|Y|fastq目录下`result.fastq.gz`文件
+<XXX>||N|barcode目录下`<XXX>.fastq`文件
+<XXX>||Y|barcode目录下`<XXX>.fastq.gz`文件
+
+注意事项如下：
+- `barcode`为空、`compress = Y`时，必须设置`merged = Y`。
+- `barcode`不能包含空格。
+- 对于找到的所有fastq文件，程序会检查其是否存在。
+
+参考[demo.txt](demo/demo.txt)文件的`fastq_name`一列。
 
 ### 程序参数
 
@@ -102,5 +117,7 @@ singularity exec -e \
     --config samples_info=/xxx/samples_info.txt [out_dir="/xxx"] [out_gz="True"]
 ```
 
-其中`--config`指定配置参数，`samples_info`设置信息表的路径，必填参数。`out_dir`指定输出目录，可选参数。未指定时在当前工作目录输出。`out_gz`设置输出文件是否用`gzip`压缩，可选参数，设置时压缩，不设置时不压缩。
-
+其中`--config`指定配置参数。具体如下：
+- `samples_info`，设置信息表的路径，必填参数。
+- `out_dir`，指定输出目录，可选参数。未指定时在当前工作目录输出。
+- `out_gz`，设置输出文件是否用`gzip`压缩，可选参数，设置时压缩，不设置时不压缩。
