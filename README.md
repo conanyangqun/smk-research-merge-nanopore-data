@@ -81,12 +81,13 @@ singularity exec -e \
 
 信息表主要包含以下字段，用于控制合并的数据来源。
 - `sample_id`。具有相同ID的样本最后会合并成单个样本。最终输出文件命名为：`<sample_id>.tgs.fastq.gz`或者`<sample_id>.tgs.fastq`。
-- `barcode`。与`run_path`配合寻找对应的数据文件。注意区分大小写。例如：`BC01.fastq`。
-- `merged`。填`Y`时，表示下机数据合并，`N`表示不合并。若填写了`barcode`，则不考虑此字段。
-- `compress`。填`Y`时表示数据压缩，`N`表示数据不压缩。
-- `run_path`。填数据路径到`ResultFiles`目录。例如：`/xxx/h5/ResultFiles`.
+- `from_run`。填写该数据是否来自标准的测序路径。`Y`表示来自标准的测序路径，`N`表示不是来自标准的测序路径。注意，填写`N`时，`path`列为fastq文件的绝对路径。
+- `barcode`。只在`from_run = "Y"`时有效。与`path`配合寻找对应的数据文件。注意区分大小写。例如：`BC01.fastq`。
+- `merged`。只在`from_run = "Y"`时有效。填`Y`时，表示下机数据合并，`N`表示不合并。若填写了`barcode`，则不考虑此字段。
+- `compress`。只在`from_run = "Y"`时有效。填`Y`时表示数据压缩，`N`表示数据不压缩。
+- `path`。若数据来自标准的测序路径（`from_run = "Y"`），此参数需要填数据路径到`ResultFiles`目录。例如：`/xxx/h5/ResultFiles`。若数据不是来自标准的测序路径（`from_run = "N"`），此路径为fastq文件的绝对路径。
 
-以上参数组合实现的寻找fastq文件的规则如下：
+数据来自标准的测序路径时，以上参数组合实现的寻找fastq文件的规则如下：
 
 barcode|merged|compress|寻找的fastq文件
 ---|---|---|---
@@ -99,9 +100,8 @@ barcode|merged|compress|寻找的fastq文件
 注意事项如下：
 - `barcode`为空、`compress = Y`时，必须设置`merged = Y`。
 - `barcode`不能包含空格。
-- 对于找到的所有fastq文件，程序会检查其是否存在。
 
-参考[demo.txt](demo/demo.txt)文件的`fastq_name`一列。
+对于找到的所有fastq文件，程序会检查其是否存在。参考[demo.txt](demo/demo.txt)文件。
 
 ### 程序参数
 

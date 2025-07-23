@@ -4,7 +4,7 @@
 binpath="$(dirname $(readlink -f $0))"
 demo="${binpath}/demo.txt"
 
-cut -f5-7 "${demo}" | tail -n +2 | while read run_name read_str fastq_name
+cut -f6-8 "${demo}" | tail -n +2 | while read run_name read_str fastq_name
 do
     mkdir -p "${run_name}/fastq"
     mkdir -p "${run_name}/barcode"
@@ -22,6 +22,6 @@ do
     fi
 done
 
-cut -f1-5 "${demo}">samples_info.txt
+cut -f1-6 "${demo}">samples_info.txt
 
 echo "Finish making demo."

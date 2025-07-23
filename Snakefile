@@ -25,52 +25,64 @@ else:
 samples = {}
 for i, row in samples_df.iterrows():
     s_id = row['sample_id']
+    s_from_run = row['from_run']
     s_barcode = row['barcode']
     s_compress = row['compress']
     s_merged = row['merged']
-    s_run_path = row['run_path']
+    s_path = row['path']
 
-    if ' ' in s_barcode:
-        print(f"Error: index {i} {s_id} barcode {s_barcode} has space, please check.")
-        sys.exit(1)
-    
-    barcoded_flag = True if s_barcode else False
-
-    # with barcode, ignore merged flag.
-    if not barcoded_flag and not s_merged in ['Y', 'N']:
-        print(f"Error: index {i} {s_id}  merged code {s_merged} is wrong.")
-        sys.exit(1)
-
-    if not s_compress in ['Y', 'N']:
-        print(f"Error: index {i} {s_id} compress code {s_compress} is wrong.")
-        sys.exit(1)
-    
-    s_compress_flag = True if s_compress == 'Y' else False
-    s_merged_flag = True if s_merged == 'Y' else False
-    
-    # without barcode, compress must be merged.
-    if not s_barcode and s_compress_flag and not s_merged_flag:
-        print(f"Error: {s_id} without barcode, compressed, but without merged, wrong!")
-        sys.exit(1) 
-    
     # get the right fastq list.
     s_fastqs = []
-    if s_barcode:
-        # with barcode, ignore s_merge.
-        s_fastq = os.path.join(s_run_path, 'barcode', s_barcode + '.fastq')
-        s_fastq = s_fastq + '.gz' if s_compress_flag else s_fastq
-        s_fastqs = [s_fastq]
-    else:
-        # no barcode.
-        if s_merged_flag:
-            # merged.
-            s_fastq = os.path.join(s_run_path, 'fastq', 'result.fastq')
+
+    if s_from_run not in ['Y', 'N']:
+        print(f"Error: index {i} {s_id} from_run code {s_from_run} is wrong.")
+        sys.exit(1)
+    
+    if s_from_run == 'Y':
+        # sample data from run path.
+
+        if ' ' in s_barcode:
+            print(f"Error: index {i} {s_id} barcode {s_barcode} has space, please check.")
+            sys.exit(1)
+        
+        barcoded_flag = True if s_barcode else False
+
+        # with barcode, ignore merged flag.
+        if not barcoded_flag and not s_merged in ['Y', 'N']:
+            print(f"Error: index {i} {s_id}  merged code {s_merged} is wrong.")
+            sys.exit(1)
+
+        if not s_compress in ['Y', 'N']:
+            print(f"Error: index {i} {s_id} compress code {s_compress} is wrong.")
+            sys.exit(1)
+        
+        s_compress_flag = True if s_compress == 'Y' else False
+        s_merged_flag = True if s_merged == 'Y' else False
+        
+        # without barcode, compress must be merged.
+        if not s_barcode and s_compress_flag and not s_merged_flag:
+            print(f"Error: {s_id} without barcode, compressed, but without merged, wrong!")
+            sys.exit(1) 
+        
+        if s_barcode:
+            # with barcode, ignore s_merge.
+            s_fastq = os.path.join(s_run_path, 'barcode', s_barcode + '.fastq')
             s_fastq = s_fastq + '.gz' if s_compress_flag else s_fastq
             s_fastqs = [s_fastq]
         else:
-            # a lot of small fastqs.
-            for f in glob.glob(os.path.join(s_run_path, 'fastq', '*.fastq')):
-                s_fastqs.append(f)
+            # no barcode.
+            if s_merged_flag:
+                # merged.
+                s_fastq = os.path.join(s_run_path, 'fastq', 'result.fastq')
+                s_fastq = s_fastq + '.gz' if s_compress_flag else s_fastq
+                s_fastqs = [s_fastq]
+            else:
+                # a lot of small fastqs.
+                for f in glob.glob(os.path.join(s_run_path, 'fastq', '*.fastq')):
+                    s_fastqs.append(f)
+    else:
+        # sample data is not from run path. path is fastq path.
+        s_fastqs = [s_path]
     
     # check all fastq files.
     for f in s_fastqs:
