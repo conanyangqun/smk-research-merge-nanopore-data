@@ -105,13 +105,14 @@ def find_fastq_files(wc):
 
 rule all:
     input:
-        md5_files = expand(os.path.join(out_dir, out_sample_md5), s_id=samples.keys())
+        md5_files = expand(os.path.join(out_dir, '1.Rawdata', out_sample_md5), s_id=samples.keys()),
+        nanostats_files = expand(os.path.join(out_dir, '2.Report', '{s_id}.nanostats.txt'), s_id=samples.keys()),
 
 rule merge_single_sample_data:
     input:
         fastqs = find_fastq_files,
     output:
-        out_fastq = os.path.join(out_dir, out_sample_name)
+        out_fastq = os.path.join(out_dir, '1.Rawdata', out_sample_name)
     params:
         out_cmd = "| gzip > " if out_gz else "> ",
     threads: 1
@@ -139,13 +140,36 @@ rule generate_md5:
     input:
         fastq = rules.merge_single_sample_data.output.out_fastq,
     output:
-        md5_file = os.path.join(out_dir, out_sample_md5)
+        md5_file = os.path.join(out_dir, '1.Rawdata', out_sample_md5)
     params:
-        fastq_path = out_dir,
+        fastq_path = os.path.join(out_dir, '1.Rawdata'),
     threads: 1
     resources:
         mem_mb = 2000
     shell:
         """
         md5sum {input.fastq} | sed "s|{params.fastq_path}/||g" >{output.md5_file}
+        """
+
+# run nanostat on fastq.
+rule run_nanostats:
+    input:
+        fastq = rules.merge_single_sample_data.output.out_fastq,
+        r2c = workflow.source_path('scripts/r2c.awk'),
+    output:
+        nanostats_file = os.path.join(out_dir, '2.Report', '{s_id}.nanostats.txt'),
+    params:
+        out_dir = os.path.join(out_dir, '2.Report'),
+        nanostats_file_name = '{s_id}.nanostats.txt',
+    threads: 1
+    shell:
+        """
+        NanoStat \
+            --fastq {input.fastq} \
+            --outdir {params.out_dir} \
+            -p {wildcards.s_id} \
+            --tsv \
+            | tail -n +2 \
+            | awk -F '\t' -f {input.r2c} \
+            >{output.nanostats_file}
         """
