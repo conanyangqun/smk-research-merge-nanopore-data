@@ -164,7 +164,7 @@ rule run_nanostats:
     threads: 1
     shell:
         """
-        (echo -e "sample\t{wildcards.s_id}\n";
+        (echo -e "sample\t{wildcards.s_id}";
         NanoStat \
             --fastq {input.fastq} \
             --outdir {params.out_dir} \
