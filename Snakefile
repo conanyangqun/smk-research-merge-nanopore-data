@@ -106,7 +106,7 @@ def find_fastq_files(wc):
 rule all:
     input:
         md5_files = expand(os.path.join(out_dir, '1.Rawdata', out_sample_md5), s_id=samples.keys()),
-        nanostats_files = expand(os.path.join(out_dir, '2.Report', '{s_id}.nanostats.txt'), s_id=samples.keys()),
+        nanostats_file = os.path.join(out_dir, '2.Report', 'all.nanostats.txt'),
 
 rule merge_single_sample_data:
     input:
@@ -188,5 +188,5 @@ rule merge_all_nanostats:
     shell:
         """
         head -n 1 {input[0]} | cut -f {params.column_filter_num} > {output.merged_nanostats}
-        cat {input} | grep -v '^sample' | cut -f {column_filter_num} >>{output.merged_nanostats}
+        cat {input} | grep -v '^sample' | cut -f {params.column_filter_num} >>{output.merged_nanostats}
         """
