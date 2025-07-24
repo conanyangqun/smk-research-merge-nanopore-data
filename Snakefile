@@ -29,7 +29,7 @@ for i, row in samples_df.iterrows():
     s_barcode = row['barcode']
     s_compress = row['compress']
     s_merged = row['merged']
-    s_path = row['path']
+    s_run_path = row['path']
 
     # get the right fastq list.
     s_fastqs = []
