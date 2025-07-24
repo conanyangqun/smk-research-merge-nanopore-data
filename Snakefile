@@ -164,12 +164,29 @@ rule run_nanostats:
     threads: 1
     shell:
         """
+        (echo -e "sample\t{wildcards.s_id}\n";
         NanoStat \
             --fastq {input.fastq} \
             --outdir {params.out_dir} \
             -p {wildcards.s_id} \
             --tsv \
-            | tail -n +2 \
+            | tail -n +2) \
             | awk -F '\t' -f {input.r2c} \
             >{output.nanostats_file}
+        """
+
+# merge all samples.
+rule merge_all_nanostats:
+    input:
+        nanostats_files = expand(os.path.join(out_dir, '2.Report', '{s_id}.nanostats.txt'), s_id=samples.keys()),
+    output:
+        merged_nanostats = os.path.join(out_dir, '2.Report', 'all.nanostats.txt'),
+    params:
+        column_filter_num = '1,2,3,4,6,8,20,21,22,7'
+    threads: 1
+    resources: mem_mb = 2000
+    shell:
+        """
+        head -n 1 {input[0]} | cut -f {params.column_filter_num} > {output.merged_nanostats}
+        cat {input} | grep -v '^sample' | cut -f {column_filter_num} >>{output.merged_nanostats}
         """
