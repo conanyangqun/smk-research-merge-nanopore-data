@@ -26,7 +26,7 @@ a/b/h5/ResultFiles/
 ### 软件安装
 
 有两种方式。
-- 方式1。通过`singularity`容器运行。需要在机器上安装`singularity`软件，镜像`packages.sif`中打包了`snakemake, pandas, nanostat`等软件。具体见[docs/sop.md]。
+- 方式1。通过`singularity`容器运行。需要在机器上安装`singularity`软件，镜像`packages.sif`中打包了`snakemake, pandas, nanostat`等软件。具体见[docs/sop.md](docs/sop.md)。推荐用此种方式。
 - 方式2。机器上安装`snakemake, pandas, nanostat`等软件后，直接运行。
 
 ### 基本用法
@@ -38,7 +38,7 @@ a/b/h5/ResultFiles/
 
 信息表主要包含以下字段，用于控制合并的数据来源。
 - `sample_id`。具有相同ID的样本最后会合并成单个样本。最终输出文件命名为：`<sample_id>.tgs.fastq.gz`或者`<sample_id>.tgs.fastq`。
-- `from_run`。填写该数据是否来自标准的测序路径。`Y`表示来自标准的测序路径，`N`表示不是来自标准的测序路径。注意，填写`N`时，`path`列为fastq文件的绝对路径。
+- `from_run`。填写该数据是否来自标准的测序路径。`Y`表示来自标准的测序路径，一般用于合并测序目录下的数据。`N`表示不是来自标准的测序路径，一般用于合并单个零散的文件。注意，填写`N`时，`path`列为fastq文件的绝对路径。
 - `barcode`。只在`from_run = "Y"`时有效。与`path`配合寻找对应的数据文件。注意区分大小写。例如：`BC01.fastq`。
 - `merged`。只在`from_run = "Y"`时有效。填`Y`时，表示下机数据合并，`N`表示不合并。若填写了`barcode`，则不考虑此字段。
 - `compress`。只在`from_run = "Y"`时有效。填`Y`时表示数据压缩，`N`表示数据不压缩。
