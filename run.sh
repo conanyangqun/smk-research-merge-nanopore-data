@@ -12,9 +12,11 @@ fi
 
 singularity exec \
     -e \
+    -b "${bin_path}" \
     -b "$3" \
     ${sif_file} \
     snakemake \
     --cores 3 \
     -p \
+    -s "{bin_path}/Snakefile" \
     --config info="$1" out_gz="True" out_dir="$2"
