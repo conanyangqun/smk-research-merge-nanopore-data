@@ -1,0 +1,9 @@
+Bootstrap: docker
+From: snakemake/snakemake:v9.8.1
+
+%post
+    pip3 install --no-cache-dir \
+        pandas \
+        openpyxl \
+        xlrd \
+        nanostat
