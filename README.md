@@ -48,9 +48,9 @@ a/b/h5/ResultFiles/
 
 barcode|merged|compress|寻找的fastq文件
 ---|---|---|---
-|N|N|fastq目录下所有`*.fastq`文件
-|Y|N|fastq目录下`result.fastq`文件
-|Y|Y|fastq目录下`result.fastq.gz`文件
+不填写|N|N|fastq目录下所有`*.fastq`文件
+不填写|Y|N|fastq目录下`result.fastq`文件
+不填写|Y|Y|fastq目录下`result.fastq.gz`文件
 `<XXX>`||N|barcode目录下`<XXX>.fastq`文件
 `<XXX>`||Y|barcode目录下`<XXX>.fastq.gz`文件
 
