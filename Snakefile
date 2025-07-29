@@ -182,12 +182,15 @@ rule merge_all_nanostats:
     output:
         merged_nanostats = os.path.join(out_dir, '2.Report', 'all.nanostats.txt'),
     params:
-        column_filter_num = '1,2,3,4,5,7,9,20,21,22,8'
+        column_filter_num = '$1,$2,$3,$4,$5,$7,$9,$20,$21,$22,$8'
     threads: 1
     resources: mem_mb = 2000
     shell:
         """
-        head -n 1 {input[0]} | cut -f {params.column_filter_num} > {output.merged_nanostats}
-        cat {input} | grep -v '^sample' | cut -f {params.column_filter_num} | awk -F '\t' '{{$3=$3/1000000}} 1'\
+        head -n 1 {input[0]} | awk -F '\\t' 'BEGIN {{OFS="\\t"}} {{print {params.column_filter_num} }}' \
+            > {output.merged_nanostats}
+
+        cat {input} | grep -v '^sample' | \
+            awk -F '\\t' 'BEGIN {{OFS="\\t"}} {{$3=$3/1000000; print {params.column_filter_num} }}' \
             >>{output.merged_nanostats}
         """
